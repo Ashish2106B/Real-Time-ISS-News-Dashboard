@@ -4,7 +4,7 @@ export interface Astronaut {
   image?: string;
 }
 
-const PRIMARY_URL = 'https://corquaid.github.io/international-space-station-api/api/astronauts.json';
+const PRIMARY_URL = 'https://corquaid.github.io/international-space-station-APIs/JSON/people-in-space.json';
 const FALLBACK_URL = 'https://api.open-notify.org/astros.json';
 
 export const AstronautsService = {
