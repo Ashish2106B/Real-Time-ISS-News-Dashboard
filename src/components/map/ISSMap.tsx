@@ -63,33 +63,40 @@ const PULSE_STYLE = `
 
 export const ISSMap = memo(() => {
   const { trajectory, currentData, loading } = useISSData();
+  const isDark = useAppStore((s) => s.isDark);
 
   const trajectoryLine: [number, number][] = trajectory.map((p) => [p.latitude, p.longitude]);
 
+  // Use vibrant satellite for dark mode, colorful street for light mode
+  const tileUrl = isDark
+    ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+  const attribution = isDark
+    ? '&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+    : '&copy; <a href="https://carto.com/">CARTO</a>';
+
   return (
-    <div className="relative w-full h-[400px] lg:h-[520px] rounded-2xl overflow-hidden border border-slate-700/50 shadow-2xl shadow-cyan-900/10">
+    <div className="relative w-full h-[400px] lg:h-[520px] rounded-2xl overflow-hidden border border-[var(--border-color)] shadow-2xl shadow-cyan-500/10 transition-all duration-500">
       <style>{PULSE_STYLE}</style>
 
       {/* Loading skeleton */}
       {loading && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-950/90 space-y-3">
-          <div className="w-10 h-10 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs text-cyan-400 tracking-widest uppercase">Acquiring Signal…</p>
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[var(--bg-color)]/90 space-y-3">
+          <div className="w-10 h-10 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-cyan-500 tracking-widest uppercase font-bold">Acquiring Orbital Signal…</p>
         </div>
       )}
 
       <MapContainer
         center={[0, 0]}
-        zoom={2}
+        zoom={3}
         scrollWheelZoom
         zoomControl
         className="w-full h-full"
-        style={{ background: '#0f172a' }}
+        style={{ background: 'var(--bg-color)' }}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        />
+        <TileLayer attribution={attribution} url={tileUrl} />
 
         {currentData && (
           <>
@@ -97,11 +104,17 @@ export const ISSMap = memo(() => {
             <Marker position={[currentData.latitude, currentData.longitude]} icon={issIcon}>
               <Popup className="iss-popup">
                 <div className="text-xs space-y-1 min-w-[160px]">
-                  <p className="font-bold text-cyan-400 text-sm">🛰 ISS</p>
-                  <p><span className="text-slate-400">Lat</span> <span className="font-mono text-white">{currentData.latitude.toFixed(4)}°</span></p>
-                  <p><span className="text-slate-400">Lon</span> <span className="font-mono text-white">{currentData.longitude.toFixed(4)}°</span></p>
-                  <p><span className="text-slate-400">Speed</span> <span className="font-mono text-cyan-400">{Math.round(currentData.speed).toLocaleString()} km/h</span></p>
-                  <p><span className="text-slate-400">At</span> <span className="font-mono text-slate-300">{new Date(currentData.timestamp * 1000).toUTCString().slice(17, 25)} UTC</span></p>
+                  <p className="font-bold text-cyan-500 text-sm flex items-center">
+                    <Satellite className="w-3.5 h-3.5 mr-1.5" /> ISS Station
+                  </p>
+                  <p className="flex justify-between border-b border-[var(--border-color)] pb-1 mb-1">
+                    <span className="text-[var(--text-muted)]">Position</span> 
+                    <span className="font-mono text-[var(--text-primary)] font-bold">{currentData.latitude.toFixed(2)}°, {currentData.longitude.toFixed(2)}°</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span className="text-[var(--text-muted)]">Velocity</span> 
+                    <span className="font-mono text-cyan-500 font-bold">{Math.round(currentData.speed).toLocaleString()} km/h</span>
+                  </p>
                 </div>
               </Popup>
             </Marker>
@@ -112,7 +125,12 @@ export const ISSMap = memo(() => {
           <>
             <Polyline
               positions={trajectoryLine}
-              pathOptions={{ color: '#ef4444', weight: 1.5, opacity: 0.35, dashArray: '6 4' }}
+              pathOptions={{ 
+                color: isDark ? '#ec4899' : '#0891b2', 
+                weight: 2, 
+                opacity: 0.6, 
+                dashArray: '8 6' 
+              }}
             />
             <TrajectoryPoints points={trajectoryLine} />
           </>
@@ -120,19 +138,25 @@ export const ISSMap = memo(() => {
       </MapContainer>
 
       {/* Overlay badge */}
-      <div className="absolute top-3 left-3 z-[1000] flex items-center space-x-2 px-3 py-1.5 bg-slate-950/80 backdrop-blur-sm border border-slate-700/50 rounded-lg pointer-events-none">
-        <span className="relative flex h-2 w-2">
+      <div className="absolute top-4 left-4 z-[1000] flex items-center space-x-3 px-4 py-2 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] rounded-xl pointer-events-none shadow-lg">
+        <span className="relative flex h-2.5 w-2.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500" />
         </span>
-        <p className="text-[11px] font-semibold text-cyan-400 tracking-wider uppercase">Live Orbital Track</p>
+        <div>
+          <p className="text-[10px] font-bold text-cyan-500 tracking-wider uppercase leading-none mb-0.5">Live Track</p>
+          <p className="text-[9px] text-[var(--text-muted)] font-medium leading-none">Global Coverage active</p>
+        </div>
       </div>
 
       {/* Speed badge */}
       {currentData && currentData.speed > 0 && (
-        <div className="absolute top-3 right-3 z-[1000] px-3 py-1.5 bg-slate-950/80 backdrop-blur-sm border border-slate-700/50 rounded-lg pointer-events-none">
-          <p className="text-[11px] text-slate-400 uppercase tracking-wider">Orbital Velocity</p>
-          <p className="text-sm font-bold font-mono text-white">{Math.round(currentData.speed).toLocaleString()} <span className="text-cyan-400 text-xs">km/h</span></p>
+        <div className="absolute bottom-4 right-4 z-[1000] px-4 py-3 bg-[var(--card-bg)] backdrop-blur-md border border-[var(--border-color)] rounded-xl pointer-events-none shadow-lg text-right">
+          <p className="text-[10px] text-[var(--text-muted)] font-bold uppercase tracking-widest mb-1">Orbital Velocity</p>
+          <p className="text-xl font-black font-mono text-[var(--text-primary)] leading-none">
+            {Math.round(currentData.speed).toLocaleString()} 
+            <span className="text-cyan-500 text-xs ml-1 font-bold">KM/H</span>
+          </p>
         </div>
       )}
     </div>
