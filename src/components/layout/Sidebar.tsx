@@ -1,10 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useAppStore } from '../../store/appStore';
 import { ThemeToggle } from './ThemeToggle';
 import {
   Satellite, Newspaper, Bot, BarChart3,
-  Sun, Moon, Menu, X, Users, Map,
+  Menu, X, Users, Map,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -23,7 +22,6 @@ const navItems = [
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onToggle }) => {
-  const { isDark, toggleTheme } = useAppStore();
 
   return (
     <>

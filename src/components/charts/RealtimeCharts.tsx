@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, TrendingUp, Gauge, MapPin } from 'lucide-react';
 import {

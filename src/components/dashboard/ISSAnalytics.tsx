@@ -1,11 +1,10 @@
-import React, { memo, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw, Satellite, Activity, MapPin, Clock, Zap } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useISSData } from '../../hooks/useISSData';
-import { useAppStore } from '../../store/appStore';
 
 const fmt = (n: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(n);
 
