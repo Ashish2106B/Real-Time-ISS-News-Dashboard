@@ -4,12 +4,11 @@ import { NewsCard } from '../news/NewsCard';
 import { NewsControls } from '../news/NewsControls';
 
 const SkeletonCard = () => (
-  <div className="bg-slate-900/40 border border-slate-700/50 rounded-xl overflow-hidden animate-pulse">
-    <div className="h-40 bg-slate-800" />
+  <div className="glass-card overflow-hidden animate-pulse">
+    <div className="h-40 bg-[var(--card-bg)]" />
     <div className="p-4 space-y-2">
-      <div className="h-4 bg-slate-800 rounded w-3/4" />
-      <div className="h-3 bg-slate-800 rounded w-full" />
-      <div className="h-3 bg-slate-800 rounded w-2/3" />
+      <div className="h-4 bg-[var(--card-bg)] rounded w-3/4" />
+      <div className="h-3 bg-[var(--card-bg)] rounded w-full" />
     </div>
   </div>
 );
@@ -26,8 +25,8 @@ export const NewsDashboard = () => {
     <div className="w-full space-y-6">
       {/* Header */}
       <div className="flex items-center space-x-3">
-        <Newspaper className="text-purple-400 w-7 h-7" />
-        <h2 className="text-2xl font-bold text-white tracking-wider">Space Intel Feed</h2>
+        <Newspaper className="text-purple-500 w-7 h-7" />
+        <h2 className="text-2xl font-bold text-[var(--text-primary)] tracking-wider">Space Intel Feed</h2>
         {!loading && (
           <span className="px-2 py-0.5 text-xs bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-400">
             {articles.length} articles

@@ -25,7 +25,7 @@ export const NewsCard = memo(({ article, index }: NewsCardProps) => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.04 }}
     whileHover={{ y: -3 }}
-    className="group flex flex-col bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-xl overflow-hidden hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-900/10 transition-all duration-300"
+    className="group flex flex-col glass-card overflow-hidden hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-300"
   >
     {/* Image */}
     {article.image_url ? (
@@ -37,14 +37,14 @@ export const NewsCard = memo(({ article, index }: NewsCardProps) => (
           loading="lazy"
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-        <span className="absolute bottom-2 left-2 px-2 py-0.5 text-[10px] font-medium bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300 backdrop-blur-sm">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <span className="absolute bottom-2 left-2 px-2 py-0.5 text-[10px] font-medium bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-400 backdrop-blur-sm">
           {article.news_site}
         </span>
       </div>
     ) : (
-      <div className="h-10 flex items-center px-4 bg-slate-800/30 flex-shrink-0">
-        <span className="px-2 py-0.5 text-[10px] font-medium bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300">
+      <div className="h-10 flex items-center px-4 bg-[var(--card-bg)] flex-shrink-0 border-b border-[var(--border-color)]">
+        <span className="px-2 py-0.5 text-[10px] font-medium bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-500">
           {article.news_site}
         </span>
       </div>
@@ -52,16 +52,16 @@ export const NewsCard = memo(({ article, index }: NewsCardProps) => (
 
     {/* Content */}
     <div className="flex flex-col flex-1 p-4 space-y-2">
-      <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2 group-hover:text-purple-200 transition-colors">
+      <h3 className="text-sm font-semibold text-[var(--text-primary)] leading-snug line-clamp-2 group-hover:text-purple-500 transition-colors">
         {article.title}
       </h3>
-      <p className="text-xs text-slate-500 line-clamp-2 flex-1">{article.summary}</p>
+      <p className="text-xs text-[var(--text-secondary)] line-clamp-2 flex-1">{article.summary}</p>
       <div className="flex items-center justify-between pt-1">
-        <span className="flex items-center text-[11px] text-slate-600">
+        <span className="flex items-center text-[11px] text-[var(--text-muted)]">
           <Clock className="w-3 h-3 mr-1" />
           {timeAgo(article.published_at)}
         </span>
-        <ExternalLink className="w-3.5 h-3.5 text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <ExternalLink className="w-3.5 h-3.5 text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
     </div>
   </motion.a>

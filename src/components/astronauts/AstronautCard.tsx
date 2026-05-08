@@ -31,9 +31,9 @@ export const AstronautCard = memo(({ astronaut, index }: AstronautCardProps) => 
     indigo: 'from-indigo-500 to-blue-600 shadow-indigo-500/20',
   };
   const badgeMap: Record<string, string> = {
-    cyan: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
-    purple: 'bg-purple-500/10 border-purple-500/20 text-purple-400',
-    indigo: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400',
+    cyan: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-600 dark:text-cyan-400',
+    purple: 'bg-purple-500/10 border-purple-500/20 text-purple-600 dark:text-purple-400',
+    indigo: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-400',
   };
 
   return (
@@ -41,14 +41,14 @@ export const AstronautCard = memo(({ astronaut, index }: AstronautCardProps) => 
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.06 }}
-      className="flex-shrink-0 flex flex-col items-center space-y-2 p-4 bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-xl hover:border-slate-600/50 transition-colors w-28"
+      className="flex-shrink-0 flex flex-col items-center space-y-2 p-4 glass-card w-28 hover:border-[var(--accent-cyan)] transition-colors group"
     >
       {/* Avatar */}
-      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${colorMap[color]} flex items-center justify-center shadow-lg text-sm font-bold text-white`}>
+      <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${colorMap[color]} flex items-center justify-center shadow-lg text-sm font-bold text-white group-hover:scale-110 transition-transform`}>
         {getInitials(astronaut.name)}
       </div>
       {/* Name */}
-      <p className="text-xs font-medium text-white text-center leading-tight line-clamp-2">
+      <p className="text-xs font-medium text-[var(--text-primary)] text-center leading-tight line-clamp-2">
         {astronaut.name}
       </p>
       {/* Craft badge */}
