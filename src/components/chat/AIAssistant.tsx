@@ -149,10 +149,11 @@ export const AIAssistant: React.FC = () => {
             <div className="w-6 h-6 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-3.5 h-3.5 text-cyan-500" />
             </div>
-            <div className="px-4 py-3 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl rounded-bl-sm shadow-sm">
+            <div className="px-4 py-3 bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl rounded-bl-sm shadow-sm flex items-center space-x-3">
+              <span className="text-[10px] text-cyan-500 font-medium tracking-tight uppercase animate-pulse">Analysing Dashboard Data...</span>
               <div className="flex space-x-1">
                 {[0, 150, 300].map((delay) => (
-                  <span key={delay} className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-bounce" style={{ animationDelay: `${delay}ms` }} />
+                  <span key={delay} className="w-1 h-1 bg-cyan-500/60 rounded-full animate-bounce" style={{ animationDelay: `${delay}ms` }} />
                 ))}
               </div>
             </div>

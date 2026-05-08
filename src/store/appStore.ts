@@ -86,7 +86,6 @@ export const useAppStore = create<AppStore>()(
       name: 'orbital-dashboard-store',
       partialize: (state) => ({
         isDark: state.isDark,
-        messages: state.messages,
         trajectory: state.trajectory,
       }),
     }

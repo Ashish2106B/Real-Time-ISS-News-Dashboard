@@ -106,25 +106,25 @@ function buildLocalResponse(input: string, ctx: DashboardContext): string | null
   return null;
 }
 
-const STORAGE_KEY = 'nova_chat_history';
-const MAX_MESSAGES = 30;
+// Chat constants removed (persistence disabled)
+
+// --- HUGGING FACE CONFIGURATION ---
+// Paste your Hugging Face Access Token below
+const HF_TOKEN = 'PASTE_YOUR_HF_TOKEN_HERE';
+const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.2';
 
 export class AIService {
   static loadHistory(): AIMessage[] {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch { return []; }
+    // Return empty array to start fresh every time (no persistent storage)
+    return [];
   }
 
-  static saveHistory(messages: AIMessage[]): void {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-MAX_MESSAGES)));
-    } catch {}
+  static saveHistory(_messages: AIMessage[]): void {
+    // Do nothing - don't store history in localStorage
   }
 
   static clearHistory(): void {
-    localStorage.removeItem(STORAGE_KEY);
+    // Persistence disabled - no history to clear
   }
 
   static async generateResponse(userInput: string, ctx: DashboardContext): Promise<string> {
@@ -132,11 +132,58 @@ export class AIService {
       return "I only know dashboard data.";
     }
 
-    // Try local knowledge base first
+    // 1. Synthetic "Thinking" delay
+    await new Promise(resolve => setTimeout(resolve, 2500));
+
+    // 2. Try Hugging Face first
+    if (HF_TOKEN && !HF_TOKEN.includes('PASTE_YOUR')) {
+      try {
+        const contextStr = generateContext(ctx);
+        const prompt = `[INST] You are NOVA, a Space Intelligence AI. 
+INSTRUCTIONS:
+1. GREETING: If the user greets you, provide a dynamic, professional greeting as a Space Intelligence Officer. If they do NOT greet you, skip the greeting entirely.
+2. EXTRACTION: Extract ONLY the specific information requested from the data below. Be extremely concise.
+
+DASHBOARD DATA:
+${contextStr}
+
+User Question: ${userInput} [/INST]`;
+
+        const response = await fetch(
+          `https://api-inference.huggingface.co/models/${HF_MODEL}`,
+          {
+            headers: {
+              Authorization: `Bearer ${HF_TOKEN}`,
+              'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify({
+              inputs: prompt,
+              parameters: {
+                max_new_tokens: 150,
+                temperature: 0.4, // Lower temperature for more direct answers
+                return_full_text: false,
+              },
+            }),
+          }
+        );
+
+        const result = await response.json();
+        if (Array.isArray(result) && result[0]?.generated_text) {
+          let text = result[0].generated_text.trim();
+          // Remove any remaining prompt artifacts
+          text = text.replace(/THOUGHT:.*?\n/i, '').replace(/RESPONSE:/i, '').trim();
+          return text;
+        }
+      } catch (error) {
+        console.error('HF API Error:', error);
+      }
+    }
+
+    // 2. Fallback to local knowledge base
     const local = buildLocalResponse(userInput, ctx);
     if (local) return local;
 
-    // Fallback: generic but honest
-    return `🔭 Based on current dashboard data:\n\n${generateContext(ctx)}\n\nThat's everything I have right now. Try asking specifically about ISS speed, position, crew, or news!`;
+    return `🔭 Current Data:\n${generateContext(ctx)}`;
   }
 }
