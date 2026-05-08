@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../../store/appStore';
+import { ThemeToggle } from './ThemeToggle';
 import {
   Satellite, Newspaper, Bot, BarChart3,
   Sun, Moon, Menu, X, Users, Map,
@@ -77,14 +78,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen
         </nav>
 
         {/* Bottom */}
-        <div className="px-3 py-4 border-t border-slate-800/50 space-y-2">
-          <button
-            onClick={toggleTheme}
-            className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm text-slate-500 hover:text-white hover:bg-slate-800/50 transition-all"
-          >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
-            <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
-          </button>
+        <div className="px-3 py-4 border-t border-slate-800/50 space-y-4">
+          <ThemeToggle />
           <div className="px-4 py-3 bg-slate-900/50 rounded-xl border border-slate-800/50">
             <div className="flex items-center space-x-2 mb-1">
               <span className="relative flex h-2 w-2">

@@ -39,6 +39,12 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isDark = useAppStore((s) => s.isDark);
 
+  React.useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(isDark ? 'dark' : 'light');
+  }, [isDark]);
+
   const renderContent = () => {
     switch (activeTab) {
       case 'tracker':
@@ -68,7 +74,7 @@ function App() {
   };
 
   return (
-    <div className={isDark ? 'dark' : ''}>
+    <div>
       <div className="stars-bg" />
       <Toaster
         position="top-right"

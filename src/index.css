@@ -4,10 +4,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme variables */
+:root {
+  --bg-color: #020617;
+  --card-bg: rgba(15, 23, 42, 0.4);
+  --card-bg-solid: #0f172a;
+  --border-color: rgba(51, 65, 85, 0.5);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --glass-blur: blur(12px);
+  --sidebar-bg: rgba(2, 6, 23, 0.9);
+}
+
+.light {
+  --bg-color: #f1f5f9;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --card-bg-solid: #ffffff;
+  --border-color: rgba(203, 213, 225, 0.8);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --sidebar-bg: rgba(255, 255, 255, 0.9);
+}
+
 @layer base {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -16,165 +38,99 @@
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background-color: #020617;
-    color: #f8fafc;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(51, 65, 85, 0.5);
-    border-radius: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(71, 85, 105, 0.7);
-  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.3); border-radius: 3px; }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-xl;
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
   }
 
   .glass-card-hover {
-    @apply glass-card hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5 transition-all duration-300;
+    @apply glass-card hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5;
   }
 
   .gradient-text {
     @apply bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent;
   }
-
-  .glow-border {
-    box-shadow: 0 0 15px rgba(6, 182, 212, 0.1), inset 0 0 15px rgba(6, 182, 212, 0.05);
-  }
 }
 
-@layer utilities {
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-}
-
-/* Animated background gradient */
+/* Background effects */
 .bg-space-gradient {
-  background: linear-gradient(135deg, #020617 0%, #0a0e27 25%, #111638 50%, #0a0e27 75%, #020617 100%);
+  background: linear-gradient(135deg, var(--bg-color) 0%, #0a0e27 25%, #111638 50%, #0a0e27 75%, var(--bg-color) 100%);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
 }
 
+.light .bg-space-gradient {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+}
+
 @keyframes gradientShift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
-/* Stars background effect */
 .stars-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.15), transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.1), transparent),
-    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.15), transparent),
-    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.1), transparent),
-    radial-gradient(2px 2px at 160px 30px, rgba(255, 255, 255, 0.12), transparent),
-    radial-gradient(1px 1px at 200px 60px, rgba(6, 182, 212, 0.2), transparent),
-    radial-gradient(1px 1px at 20px 120px, rgba(255, 255, 255, 0.1), transparent),
-    radial-gradient(2px 2px at 100px 140px, rgba(139, 92, 246, 0.15), transparent),
-    radial-gradient(1px 1px at 60px 160px, rgba(255, 255, 255, 0.1), transparent),
-    radial-gradient(1px 1px at 180px 150px, rgba(255, 255, 255, 0.08), transparent);
-  background-size: 220px 180px;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(1px 1px at 20px 30px, var(--text-muted), transparent),
+                    radial-gradient(1px 1px at 100px 140px, var(--text-secondary), transparent);
+  background-size: 200px 200px;
+  opacity: 0.15;
 }
 
-/* Leaflet overrides for dark theme */
-.leaflet-container {
-  background: #0f172a !important;
-  font-family: 'Inter', sans-serif !important;
-}
+.light .stars-bg { opacity: 0.05; }
+
+/* Leaflet & Map */
+.leaflet-container { background: var(--bg-color) !important; transition: background-color 0.4s ease; }
+.leaflet-marker-icon { transition: transform 1.5s linear; }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(15, 23, 42, 0.95) !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(51, 65, 85, 0.5) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(12px) !important;
-}
-
-.leaflet-popup-tip {
-  background: rgba(15, 23, 42, 0.95) !important;
-}
-
-.leaflet-control-zoom a {
-  background: rgba(15, 23, 42, 0.9) !important;
-  color: #94a3b8 !important;
-  border-color: rgba(51, 65, 85, 0.5) !important;
-}
-
-.leaflet-control-zoom a:hover {
-  background: rgba(30, 41, 59, 0.9) !important;
-  color: #f8fafc !important;
-}
-
-.leaflet-control-attribution {
-  background: rgba(15, 23, 42, 0.7) !important;
-  color: #475569 !important;
-  font-size: 10px !important;
-}
-
-.leaflet-control-attribution a {
-  color: #64748b !important;
-}
-
-.leaflet-marker-icon {
-  transition: transform 1.5s linear;
-}
-
-.leaflet-popup-content-wrapper {
-  background: rgba(15, 23, 42, 0.95) !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+  background: var(--card-bg-solid) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 12px !important;
   backdrop-filter: blur(12px) !important;
   padding: 0 !important;
 }
 
-.leaflet-popup-content {
-  margin: 12px !important;
+.leaflet-popup-content { margin: 12px !important; }
+.leaflet-popup-tip { background: var(--card-bg-solid) !important; }
+
+/* Theme Toggle Button Styles */
+.theme-toggle-btn {
+  @apply relative flex items-center p-1 bg-slate-800/50 border border-slate-700/50 rounded-full w-14 h-8 transition-all duration-500;
 }
 
-/* Light mode overrides */
-.light body {
-  background-color: #f1f5f9;
-  color: #0f172a;
+.light .theme-toggle-btn {
+  @apply bg-cyan-100 border-cyan-200;
+}
+
+.theme-toggle-thumb {
+  @apply w-6 h-6 rounded-full flex items-center justify-center shadow-md transition-all duration-500 transform;
+}
+
+.is-dark .theme-toggle-thumb {
+  @apply translate-x-6 bg-slate-900 text-amber-400;
+}
+
+.is-light .theme-toggle-thumb {
+  @apply translate-x-0 bg-white text-indigo-500;
 }
