@@ -1,4 +1,5 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {
@@ -12,10 +13,7 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
-    hasError: false,
-    error: null,
-  };
+  public state: State = { hasError: false, error: null };
 
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
@@ -25,9 +23,7 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error('ErrorBoundary caught:', error, errorInfo);
   }
 
-  private handleReset = () => {
-    this.setState({ hasError: false, error: null });
-  };
+  private handleReset = () => this.setState({ hasError: false, error: null });
 
   public render() {
     if (this.state.hasError) {
@@ -38,7 +34,7 @@ export class ErrorBoundary extends Component<Props, State> {
             {this.props.fallbackTitle || 'Something went wrong'}
           </h3>
           <p className="text-sm text-slate-400 mb-4 text-center max-w-md">
-            {this.state.error?.message || 'An unexpected error occurred in this component.'}
+            {this.state.error?.message || 'An unexpected error occurred.'}
           </p>
           <button
             onClick={this.handleReset}
@@ -50,7 +46,6 @@ export class ErrorBoundary extends Component<Props, State> {
         </div>
       );
     }
-
     return this.props.children;
   }
 }

@@ -1,23 +1,30 @@
 import { useState, useEffect, useCallback } from 'react';
 import { NewsService } from '../services/newsService';
-import type { SpaceArticle } from '../services/newsService';
+import { useAppStore, selectFilteredArticles } from '../store/appStore';
 import { toast } from 'react-hot-toast';
 
 const CACHE_KEY = 'space_news_cache';
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 
 interface CacheEntry {
-  data: SpaceArticle[];
+  data: import('../services/newsService').SpaceArticle[];
   timestamp: number;
 }
 
 export function useNewsData() {
-  const [articles, setArticles] = useState<SpaceArticle[]>([]);
+  const setArticles = useAppStore((s) => s.setArticles);
+  const filteredArticles = useAppStore(selectFilteredArticles);
+  const newsSearchQuery = useAppStore((s) => s.newsSearchQuery);
+  const newsCategory = useAppStore((s) => s.newsCategory);
+  const newsSortBy = useAppStore((s) => s.newsSortBy);
+  const setNewsSearchQuery = useAppStore((s) => s.setNewsSearchQuery);
+  const setNewsCategory = useAppStore((s) => s.setNewsCategory);
+  const setNewsSortBy = useAppStore((s) => s.setNewsSortBy);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchNews = useCallback(async (force = false) => {
-    // Check cache first
     if (!force) {
       try {
         const cached = localStorage.getItem(CACHE_KEY);
@@ -29,11 +36,8 @@ export function useNewsData() {
             return;
           }
         }
-      } catch (e) {
-        // Ignore cache errors
-      }
+      } catch { /* ignore */ }
     }
-
     setLoading(true);
     setError(null);
     try {
@@ -41,17 +45,27 @@ export function useNewsData() {
       setArticles(data);
       localStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
       if (force) toast.success('News feed refreshed');
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch news');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to fetch news';
+      setError(msg);
       toast.error('Failed to load space news');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [setArticles]);
 
-  useEffect(() => {
-    fetchNews();
-  }, [fetchNews]);
+  useEffect(() => { fetchNews(); }, [fetchNews]);
 
-  return { articles, loading, error, refresh: () => fetchNews(true) };
+  return {
+    articles: filteredArticles,
+    loading,
+    error,
+    newsSearchQuery,
+    newsCategory,
+    newsSortBy,
+    setNewsSearchQuery,
+    setNewsCategory,
+    setNewsSortBy,
+    refresh: () => fetchNews(true),
+  };
 }
