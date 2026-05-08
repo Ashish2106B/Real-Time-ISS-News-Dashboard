@@ -13,12 +13,12 @@ export const AstronautsService = {
       const response = await fetch(PRIMARY_URL);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
-      const people = data.map((p: any) => ({
+      const people = data.people.map((p: any) => ({
         name: p.name,
         craft: p.spacecraft || p.craft || 'ISS',
         image: p.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&color=fff`
       }));
-      return { people, number: people.length };
+      return { people, number: data.number || people.length };
     } catch (err) {
       console.warn('Astronauts Primary API failed, trying fallback...', err);
       try {
