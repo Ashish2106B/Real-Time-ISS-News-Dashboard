@@ -15,13 +15,18 @@ export class NewsService {
     try {
       const response = await fetch(this.API_URL);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       const data = await response.json();
+      
+      if (!data || !Array.isArray(data.results)) {
+        throw new Error('Invalid response structure from News API');
+      }
+      
       return data.results;
     } catch (error) {
       if (retries > 0) {
-        console.warn(`News fetch failed, retrying in ${backoff}ms... (${retries} retries left)`);
+        console.warn(`News fetch failed, retrying in ${backoff}ms...`, error);
         await new Promise(resolve => setTimeout(resolve, backoff));
         return this.fetchArticles(retries - 1, backoff * 2);
       }

@@ -5,12 +5,12 @@ import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area, Legend,
 } from 'recharts';
-import { useAppStore, selectSpeedHistory, selectAvgSpeed, selectMaxSpeed } from '../../store/appStore';
+import { useAppStore } from '../../store/appStore';
 import { useAstronautsData } from '../../hooks/useAstronautsData';
 
 // ── Animated counter ──────────────────────────────────────────
 const StatCard = memo(({ icon: Icon, label, value, unit, color }: {
-  icon: React.ElementType;
+  icon: any;
   label: string;
   value: string | number;
   unit?: string;
@@ -47,20 +47,32 @@ const ChartTooltip = ({ active, payload, label }: { active?: boolean; payload?: 
 const NEWS_COLORS = ['#06b6d4', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
 
 export const RealtimeCharts = memo(() => {
-  const speedHistory = useAppStore(selectSpeedHistory);
-  const avgSpeed = useAppStore(selectAvgSpeed);
-  const maxSpeed = useAppStore(selectMaxSpeed);
-  const trajectory = useAppStore((s) => s.trajectory);
-  const articles = useAppStore((s) => s.articles);
+  const trajectory = useAppStore((s) => s.trajectory) || [];
+  const articles = useAppStore((s) => s.articles) || [];
   const { astronautCount } = useAstronautsData();
 
+  const speedHistory = useMemo(() => 
+    trajectory.map(p => ({ speed: p.speed, timestamp: p.timestamp })),
+    [trajectory]
+  );
+
+  const avgSpeed = useMemo(() => {
+    const valid = trajectory.filter(p => p.speed > 0);
+    return valid.length ? valid.reduce((s, p) => s + p.speed, 0) / valid.length : 0;
+  }, [trajectory]);
+
+  const maxSpeed = useMemo(() => 
+    trajectory.reduce((max, p) => Math.max(max, p.speed), 0),
+    [trajectory]
+  );
+
   const chartData = useMemo(() =>
-    speedHistory
-      .filter((p) => p.speed > 0)
+    (speedHistory || [])
+      .filter((p) => p && p.speed > 0)
       .slice(-30)
       .map((p) => ({
-        time: new Date(p.timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        speed: Math.round(p.speed),
+        time: p.timestamp ? new Date(p.timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—',
+        speed: Math.round(p.speed || 0),
       })),
     [speedHistory]
   );
@@ -72,8 +84,8 @@ export const RealtimeCharts = memo(() => {
 
   const newsDist = useMemo(() => {
     const counts: Record<string, number> = {};
-    articles.forEach((a) => {
-      const site = a.news_site;
+    (articles || []).forEach((a) => {
+      const site = a?.news_site || 'Unknown';
       counts[site] = (counts[site] ?? 0) + 1;
     });
     return Object.entries(counts)

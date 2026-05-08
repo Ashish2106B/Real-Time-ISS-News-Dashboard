@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, Send, User, AlertTriangle, Sparkles, Trash2 } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
-import { selectCurrentISS, selectAvgSpeed, selectMaxSpeed } from '../../store/appStore';
 import { AIService } from '../../services/aiService';
 import type { AIMessage, DashboardContext } from '../../services/aiService';
 
@@ -11,13 +10,25 @@ export const AIAssistant: React.FC = () => {
   const clearMessages = useAppStore((s) => s.clearMessages);
   const messages = useAppStore((s) => s.messages);
 
-  const currentISS = useAppStore(selectCurrentISS);
-  const avgSpeed = useAppStore(selectAvgSpeed);
-  const maxSpeed = useAppStore(selectMaxSpeed);
-  const trajectory = useAppStore((s) => s.trajectory);
+  const trajectory = useAppStore((s) => s.trajectory) || [];
   const astronauts = useAppStore((s) => s.astronauts);
   const astronautCount = useAppStore((s) => s.astronautCount);
   const articles = useAppStore((s) => s.articles);
+
+  const currentISS = useMemo(() => 
+    trajectory.length > 0 ? trajectory[trajectory.length - 1] : null,
+    [trajectory]
+  );
+
+  const avgSpeed = useMemo(() => {
+    const valid = trajectory.filter(p => p.speed > 0);
+    return valid.length ? valid.reduce((s, p) => s + p.speed, 0) / valid.length : 0;
+  }, [trajectory]);
+
+  const maxSpeed = useMemo(() => 
+    trajectory.reduce((max, p) => Math.max(max, p.speed), 0),
+    [trajectory]
+  );
 
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);

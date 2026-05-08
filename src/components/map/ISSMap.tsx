@@ -46,7 +46,7 @@ const TrajectoryPoints = memo(({ points }: { points: [number, number][] }) => (
           key={i}
           center={pos}
           radius={radius}
-          pathOptions={{ color: '#06b6d4', fillColor: '#06b6d4', fillOpacity: opacity, opacity, weight: 0 }}
+          pathOptions={{ color: '#ef4444', fillColor: '#ef4444', fillOpacity: opacity, opacity, weight: 0 }}
         />
       );
     })}
@@ -112,7 +112,7 @@ export const ISSMap = memo(() => {
           <>
             <Polyline
               positions={trajectoryLine}
-              pathOptions={{ color: '#06b6d4', weight: 1.5, opacity: 0.35, dashArray: '6 4' }}
+              pathOptions={{ color: '#ef4444', weight: 1.5, opacity: 0.35, dashArray: '6 4' }}
             />
             <TrajectoryPoints points={trajectoryLine} />
           </>

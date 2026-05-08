@@ -1,4 +1,3 @@
-import React from 'react';
 import { Search, SortAsc, RefreshCw, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 

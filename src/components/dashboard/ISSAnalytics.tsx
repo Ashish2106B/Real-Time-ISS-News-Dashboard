@@ -1,11 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw, Satellite, Activity, MapPin, Clock, Zap } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { useISSData } from '../../hooks/useISSData';
-import { useAppStore, selectAvgSpeed, selectMaxSpeed } from '../../store/appStore';
+import { useAppStore } from '../../store/appStore';
 
 const fmt = (n: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(n);
 
@@ -13,7 +13,7 @@ const StatCard = memo(({ label, value, unit, icon: Icon, accent }: {
   label: string;
   value: string;
   unit?: string;
-  icon: React.ElementType;
+  icon: any;
   accent: string;
 }) => (
   <motion.div
@@ -44,15 +44,23 @@ const ChartTooltip = ({ active, payload, label }: { active?: boolean; payload?: 
 
 export const ISSAnalytics = memo(() => {
   const { trajectory, currentData, loading, error, lastUpdated, refresh } = useISSData();
-  const avgSpeed = useAppStore(selectAvgSpeed);
-  const maxSpeed = useAppStore(selectMaxSpeed);
+  
+  const avgSpeed = useMemo(() => {
+    const valid = (trajectory || []).filter(p => p.speed > 0);
+    return valid.length ? valid.reduce((s, p) => s + p.speed, 0) / valid.length : 0;
+  }, [trajectory]);
 
-  const chartData = trajectory
-    .filter((p) => p.speed > 0)
+  const maxSpeed = useMemo(() => 
+    (trajectory || []).reduce((max, p) => Math.max(max, p.speed), 0),
+    [trajectory]
+  );
+
+  const chartData = (trajectory || [])
+    .filter((p) => p && p.speed > 0)
     .slice(-30)
     .map((p) => ({
-      time: new Date(p.timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      speed: Math.round(p.speed),
+      time: p.timestamp ? new Date(p.timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—',
+      speed: Math.round(p.speed || 0),
     }));
 
   return (

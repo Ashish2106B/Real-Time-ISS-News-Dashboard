@@ -1,4 +1,3 @@
-import React from 'react';
 import { Newspaper } from 'lucide-react';
 import { useNewsData } from '../../hooks/useNewsData';
 import { NewsCard } from '../news/NewsCard';
@@ -15,7 +14,7 @@ const SkeletonCard = () => (
   </div>
 );
 
-export const NewsDashboard: React.FC = () => {
+export const NewsDashboard = () => {
   const {
     articles, loading, error,
     newsSearchQuery, newsCategory, newsSortBy,

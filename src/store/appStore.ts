@@ -94,49 +94,5 @@ export const useAppStore = create<AppStore>()(
 );
 
 // ─── Derived selectors (prevent unnecessary rerenders) ────────
-export const selectCurrentISS = (state: AppStore) =>
-  state.trajectory.length > 0 ? state.trajectory[state.trajectory.length - 1] : null;
-
-export const selectSpeedHistory = (state: AppStore) =>
-  state.trajectory.map((p) => ({ speed: p.speed, timestamp: p.timestamp }));
-
-export const selectAvgSpeed = (state: AppStore) => {
-  const valid = state.trajectory.filter((p) => p.speed > 0);
-  if (!valid.length) return 0;
-  return valid.reduce((sum, p) => sum + p.speed, 0) / valid.length;
-};
-
-export const selectMaxSpeed = (state: AppStore) =>
-  state.trajectory.reduce((max, p) => Math.max(max, p.speed), 0);
-
-export const selectFilteredArticles = (state: AppStore) => {
-  let filtered = state.articles;
-  if (state.newsSearchQuery.trim()) {
-    const q = state.newsSearchQuery.toLowerCase();
-    filtered = filtered.filter(
-      (a) =>
-        a.title.toLowerCase().includes(q) ||
-        a.summary.toLowerCase().includes(q) ||
-        a.news_site.toLowerCase().includes(q)
-    );
-  }
-  if (state.newsCategory !== 'all') {
-    filtered = filtered.filter((a) =>
-      a.news_site.toLowerCase().includes(state.newsCategory.toLowerCase())
-    );
-  }
-  if (state.newsSortBy === 'source') {
-    filtered = [...filtered].sort((a, b) => a.news_site.localeCompare(b.news_site));
-  } else {
-    filtered = [...filtered].sort(
-      (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
-    );
-  }
-  // Deduplicate by title
-  const seen = new Set<string>();
-  return filtered.filter((a) => {
-    if (seen.has(a.title)) return false;
-    seen.add(a.title);
-    return true;
-  });
-};
+export const selectTrajectory = (state: AppStore) => state.trajectory || [];
+export const selectArticles = (state: AppStore) => state.articles || [];

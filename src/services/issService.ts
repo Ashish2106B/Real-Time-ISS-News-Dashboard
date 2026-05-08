@@ -1,19 +1,23 @@
 export interface ISSPositionResponse {
-  message: string;
+  name: string;
+  id: number;
+  latitude: number;
+  longitude: number;
+  altitude: number;
+  velocity: number;
+  visibility: string;
+  footprint: number;
   timestamp: number;
-  iss_position: {
-    latitude: string;
-    longitude: string;
-  }
+  daynum: number;
+  solar_lat: number;
+  solar_lon: number;
+  units: string;
 }
 
 export class ISSService {
-  private static readonly API_URL = 'http://api.open-notify.org/iss-now.json';
+  private static readonly API_URL = 'https://api.wheretheiss.at/v1/satellites/25544';
   
-  /**
-   * Fetches the current ISS position with exponential backoff for retries
-   */
-  static async fetchPosition(retries = 3, backoff = 1000): Promise<ISSPositionResponse> {
+  static async fetchPosition(retries = 3, backoff = 1000): Promise<any> {
     try {
       const response = await fetch(this.API_URL);
       if (!response.ok) {
@@ -21,12 +25,16 @@ export class ISSService {
       }
       const data = await response.json();
       
-      // Basic anomaly detection - data format check
-      if (data.message !== 'success' || !data.iss_position || !data.iss_position.latitude || !data.iss_position.longitude) {
-        throw new Error('Invalid data structure received from API');
-      }
-      
-      return data;
+      // Adapt to the expected structure in useISSData.ts
+      // We'll return an object that matches what useISSData expect: { iss_position: { latitude, longitude }, timestamp }
+      return {
+        message: 'success',
+        timestamp: data.timestamp,
+        iss_position: {
+          latitude: data.latitude.toString(),
+          longitude: data.longitude.toString()
+        }
+      };
     } catch (error) {
       if (retries > 0) {
         console.warn(`ISS fetch failed, retrying in ${backoff}ms... (${retries} retries left)`);
