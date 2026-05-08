@@ -1,8 +1,8 @@
 import React from 'react';
 import { Newspaper } from 'lucide-react';
 import { useNewsData } from '../../hooks/useNewsData';
-import { NewsCard } from './NewsCard';
-import { NewsControls } from './NewsControls';
+import { NewsCard } from '../news/NewsCard';
+import { NewsControls } from '../news/NewsControls';
 
 const SkeletonCard = () => (
   <div className="bg-slate-900/40 border border-slate-700/50 rounded-xl overflow-hidden animate-pulse">

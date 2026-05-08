@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import type { Astronaut } from '../../services/astronautsService';
 import { motion } from 'framer-motion';
 

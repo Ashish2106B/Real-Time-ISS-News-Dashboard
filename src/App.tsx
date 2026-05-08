@@ -30,8 +30,8 @@ const wrap = (el: React.ReactNode, title: string) => (
 
 const pageVariants = {
   initial: { opacity: 0, y: 16, scale: 0.98 },
-  animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.3, ease: 'easeOut' } },
-  exit:    { opacity: 0, y: -8, scale: 0.98, transition: { duration: 0.2 } },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit:    { opacity: 0, y: -8, scale: 0.98 },
 };
 
 function App() {
@@ -105,6 +105,7 @@ function App() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
+                transition={{ duration: 0.3, ease: 'easeOut' }}
               >
                 {renderContent()}
               </motion.div>
